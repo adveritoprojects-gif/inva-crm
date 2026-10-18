@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-slate-100 text-slate-900 antialiased;
+}
+
+/* Progress bar helpers */
+.pct-progress {
+  @apply h-2 w-full overflow-hidden rounded-full bg-slate-200;
+}
+.pct-progress > span {
+  @apply block h-full rounded-full bg-emerald-500 transition-all;
+}

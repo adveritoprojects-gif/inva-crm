@@ -1,0 +1,45 @@
+# PCT Project Desk — app + local PostgreSQL
+#
+# Read the values below from .env in this directory (compose reads .env
+# automatically for ${...} substitution). Set at minimum:
+#   POSTGRES_PASSWORD=<a strong database password>
+#   ADMIN_PASSWORD_HASH=<output of node scripts/hash-password.mjs '...'>
+#
+# The database is NOT exposed on the host by default. Only the app's
+# port 3000 is published.
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: pct_crm
+      POSTGRES_USER: pct
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pct_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pct -d pct_crm"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    # Uncomment to connect from host-side tools (psql, GUI clients):
+    # ports:
+    #   - "127.0.0.1:5432:5432"
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://pct:${POSTGRES_PASSWORD}@db:5432/pct_crm
+      APP_ORIGIN: ${APP_ORIGIN:-http://localhost:3000}
+      ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH:?Set ADMIN_PASSWORD_HASH in .env}
+      PG_POOL_MAX: ${PG_POOL_MAX:-10}
+    ports:
+      - "3000:3000"
+
+volumes:
+  pct_pgdata:

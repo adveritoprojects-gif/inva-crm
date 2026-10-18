@@ -1,0 +1,34 @@
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# env files — never commit secrets
+.env
+.env.*
+!.env.example
+
+# tests
+/coverage
+test-results
+
+# typescript incremental build info
+*.tsbuildinfo
+
+# database dumps (backups stay local)
+*.sql.gz
+*.dump
